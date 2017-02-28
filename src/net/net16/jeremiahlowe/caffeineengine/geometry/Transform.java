@@ -1,4 +1,4 @@
-package net.net16.jeremiahlowe.caffeineengine.base;
+package net.net16.jeremiahlowe.caffeineengine.geometry;
 
 import net.net16.jeremiahlowe.bettercollections.Rotation;
 import net.net16.jeremiahlowe.bettercollections.vector.Vector2;
