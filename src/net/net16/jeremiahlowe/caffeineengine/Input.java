@@ -13,6 +13,11 @@ import net.net16.jeremiahlowe.bettercollections.vector.Vector2;
 public class Input implements MouseListener, KeyListener, MouseMotionListener{
 	private List<Integer> keysPressed = new ArrayList<Integer>();
 	private List<Integer> mouseButtonsPressed = new ArrayList<Integer>();
+	public List<Runnable> onMousePressedCallbacks = new ArrayList<Runnable>();
+	public List<Runnable> onMouseReleaseCallbacks = new ArrayList<Runnable>();
+	public List<Runnable> onMouseMoveCallbacks = new ArrayList<Runnable>();
+	public List<Runnable> onKeyPressCallbacks = new ArrayList<Runnable>();
+	public List<Runnable> onKeyReleaseCallbacks = new ArrayList<Runnable>();
 	private Vector2 mousePosition = new Vector2();
 	private boolean mouseEntered;
 	
@@ -32,10 +37,12 @@ public class Input implements MouseListener, KeyListener, MouseMotionListener{
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		keysPressed.add(new Integer(arg0.getKeyCode()));
+		for(Runnable r : onKeyPressCallbacks) r.run();
 	}
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		keysPressed.remove(new Integer(arg0.getKeyCode()));
+		for(Runnable r : onKeyReleaseCallbacks) r.run();
 	}
 	@Override
 	public void keyTyped(KeyEvent arg0) {}
@@ -52,10 +59,12 @@ public class Input implements MouseListener, KeyListener, MouseMotionListener{
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		mouseButtonsPressed.add(new Integer(arg0.getButton()));
+		for(Runnable r : onMousePressedCallbacks) r.run();
 	}
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		mouseButtonsPressed.remove(new Integer(arg0.getButton()));
+		for(Runnable r : onMouseReleaseCallbacks) r.run();
 	}
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
@@ -66,5 +75,6 @@ public class Input implements MouseListener, KeyListener, MouseMotionListener{
 	public void mouseMoved(MouseEvent arg0) {
 		mousePosition.x = arg0.getX();
 		mousePosition.y = arg0.getY();
+		for(Runnable r : onMouseMoveCallbacks) r.run();
 	}
 }

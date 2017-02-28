@@ -8,19 +8,20 @@ import javax.swing.JFrame;
 
 import net.net16.jeremiahlowe.TickedOff.TickManager;
 import net.net16.jeremiahlowe.caffeineengine.camera.Camera;
-import net.net16.jeremiahlowe.caffeineengine.camera.CameraRenderCanvas;
+import net.net16.jeremiahlowe.caffeineengine.camera.CameraRendererJPanel;
+import net.net16.jeremiahlowe.caffeineengine.gameui.UIElement;
 
 public class Game{
 	public Camera mainCamera;
 	private boolean paused = false;
 	public TickManager gameTick;
 	private Thread gameTickThread;
-	public CameraRenderCanvas cameraRendererCanvas;
+	public CameraRendererJPanel cameraRendererCanvas;
 	public JFrame frame;
 	
 	public Game(){
-		gameTick = new TickManager(); 
-		frame = new JFrame(); cameraRendererCanvas = new CameraRenderCanvas(mainCamera);
+		gameTick = new TickManager(); mainCamera = new Camera();
+		frame = new JFrame(); cameraRendererCanvas = new CameraRendererJPanel(mainCamera);
 		cameraRendererCanvas.setVisible(true); cameraRendererCanvas.setEnabled(true);
 		cameraRendererCanvas.setBackground(new Color(255, 255, 255));
 		Rectangle bds = new Rectangle();
@@ -42,6 +43,9 @@ public class Game{
 	}
 	public Input getInput(){
 		return cameraRendererCanvas.getInput();
+	}
+	public void addUIElement(UIElement elem){
+		cameraRendererCanvas.addUIElement(elem);
 	}
 }
 class GameTicker implements Runnable{

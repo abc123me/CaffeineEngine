@@ -1,18 +1,20 @@
 package net.net16.jeremiahlowe.caffeineengine.camera;
 
-import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 
-import net.net16.jeremiahlowe.caffeineengine.Input;
+import javax.swing.JPanel;
 
-@SuppressWarnings("serial")
-public class CameraRenderCanvas extends Canvas{
+import net.net16.jeremiahlowe.caffeineengine.Input;
+import net.net16.jeremiahlowe.caffeineengine.gameui.UIElement;
+
+public class CameraRendererJPanel extends JPanel{
+	private static final long serialVersionUID = 1L;
 	public Camera camera;
 	private BufferedImage buffer;
 	private Input input;
-	public CameraRenderCanvas(Camera camera){
+	public CameraRendererJPanel(Camera camera){
 		this.camera = camera;
 		input = new Input();
 		addKeyListener(input);
@@ -20,7 +22,8 @@ public class CameraRenderCanvas extends Canvas{
 		addMouseMotionListener(input);
 	}
 	@Override
-	public void update(Graphics g){
+	public void paintComponent(Graphics g){
+		camera.setPixelSize(getWidth(), getHeight());
 		buffer = new BufferedImage(getWidth(), getHeight(), ColorModel.TRANSLUCENT);
 		camera.renderGraphics(buffer.getGraphics());
 		g.setColor(getBackground());
@@ -29,5 +32,11 @@ public class CameraRenderCanvas extends Canvas{
 	}
 	public Input getInput(){
 		return input;
+	}
+	public void addUIElement(UIElement elem){
+		camera.addRenderListener(elem);
+	}
+	public void removeUIElement(UIElement elem){
+		camera.removeRenderListener(elem);
 	}
 }
