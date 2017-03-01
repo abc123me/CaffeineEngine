@@ -8,27 +8,32 @@ import javax.swing.JFrame;
 
 import net.net16.jeremiahlowe.TickedOff.TickManager;
 import net.net16.jeremiahlowe.caffeineengine.camera.Camera;
-import net.net16.jeremiahlowe.caffeineengine.camera.CameraRendererJPanel;
+import net.net16.jeremiahlowe.caffeineengine.camera.CameraRendererPanel;
 import net.net16.jeremiahlowe.caffeineengine.gameui.UIElement;
+import net.net16.jeremiahlowe.caffeineengine.geometry.Bounds;
 
 public class Game{
 	public Camera mainCamera;
 	private boolean paused = false;
 	public TickManager gameTick;
 	private Thread gameTickThread;
-	public CameraRendererJPanel cameraRendererCanvas;
+	public CameraRendererPanel cameraRendererPanel;
 	public JFrame frame;
 	
 	public Game(){
-		gameTick = new TickManager(); mainCamera = new Camera();
-		frame = new JFrame(); cameraRendererCanvas = new CameraRendererJPanel(mainCamera);
-		cameraRendererCanvas.setVisible(true); cameraRendererCanvas.setEnabled(true);
-		cameraRendererCanvas.setBackground(new Color(255, 255, 255));
-		Rectangle bds = new Rectangle();
-		bds.width = 500; bds.height = 350;
-		bds.x = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - bds.width / 2;
-		bds.y = Toolkit.getDefaultToolkit().getScreenSize().height / 2 - bds.height / 2;
-		frame.add(cameraRendererCanvas); frame.setBounds(bds);
+		gameTick = new TickManager(); 
+		mainCamera = new Camera();
+		frame = new JFrame(); 
+		cameraRendererPanel = new CameraRendererPanel(mainCamera);
+		cameraRendererPanel.setVisible(true); 
+		cameraRendererPanel.setEnabled(true);
+		cameraRendererPanel.setBackground(new Color(255, 255, 255));
+		Bounds bds = new Bounds();
+		bds.w = 500; bds.h = 350;
+		bds.x = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - bds.w / 2;
+		bds.y = Toolkit.getDefaultToolkit().getScreenSize().height / 2 - bds.h / 2;
+		frame.add(cameraRendererPanel); 
+		frame.setBounds(bds.toRectangle());
 		gameTickThread = new Thread(new GameTicker(this));
 	}
 	
@@ -42,10 +47,10 @@ public class Game{
 		return paused;
 	}
 	public Input getInput(){
-		return cameraRendererCanvas.getInput();
+		return cameraRendererPanel.getInput();
 	}
 	public void addUIElement(UIElement elem){
-		cameraRendererCanvas.addUIElement(elem);
+		cameraRendererPanel.addUIElement(elem);
 	}
 }
 class GameTicker implements Runnable{

@@ -11,21 +11,26 @@ public class Camera{
 	public Transform transform;
 	private float viewWindowWidth = 1, viewWindowHeight = 1;
 	private int pixelWidth, pixelHeight;
-	private List<RenderListener> renderListeners = new ArrayList<RenderListener>();
+	private List<RenderListener> uiRenderListeners = new ArrayList<RenderListener>();
+	private List<RenderListener> gameRenderListeners = new ArrayList<RenderListener>();
 	
 	public void setPixelSize(int w, int h){
 		if(w <= 0 || h <= 0) throw new RuntimeException("Camera width/height must be greater than zero!");
 		pixelWidth = w; pixelHeight = h;
 	}
 	public void renderGraphics(Graphics g){
-		for(RenderListener rl : renderListeners) rl.onEnterRender(g);
-		for(RenderListener rl : renderListeners) rl.onExitRender(g);
+		for(RenderListener rl : gameRenderListeners) rl.onEnterRender(g);
+		for(RenderListener rl : gameRenderListeners) rl.onExitRender(g);
+		for(RenderListener rl : uiRenderListeners) rl.onEnterRender(g);
+		for(RenderListener rl : uiRenderListeners) rl.onExitRender(g);
 	}
-	public void addRenderListener(RenderListener rl){
-		renderListeners.add(rl);
+	public void addRenderListener(RenderListener rl){addRenderListener(rl, false);}
+	public void removeRenderListener(RenderListener rl){removeRenderListener(rl, false);}
+	public void addRenderListener(RenderListener rl, boolean isUI){
+		(isUI ? uiRenderListeners : gameRenderListeners).add(rl);
 	}
-	public void removeRenderListener(RenderListener rl){
-		renderListeners.remove(rl);
+	public void removeRenderListener(RenderListener rl, boolean isUI){
+		(isUI ? uiRenderListeners : gameRenderListeners).remove(rl);
 	}
 	public Vector2 castWorldToScreen(Vector2 world){
 		Vector2 screen = new Vector2();

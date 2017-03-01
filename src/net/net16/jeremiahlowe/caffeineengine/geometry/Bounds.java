@@ -1,5 +1,7 @@
 package net.net16.jeremiahlowe.caffeineengine.geometry;
 
+import java.awt.Rectangle;
+
 import net.net16.jeremiahlowe.bettercollections.vector.Vector2;
 
 public class Bounds {
@@ -17,4 +19,10 @@ public class Bounds {
 	public Vector2 getSize(){return new Vector2(w, h);}
 	public boolean inBounds(float x, float y){return ((x > this.x && x < this.x + w) && (y > this.y && y < this.y + h));}
 	public boolean inBounds(Vector2 pos){return inBounds(pos.x, pos.y);}
+	public Rectangle toRectangle(){
+		Rectangle r = new Rectangle();
+		r.x = (int) x; r.y = (int) y; 
+		r.width = (int) w; r.height = (int) h;
+		return r;
+	}
 }

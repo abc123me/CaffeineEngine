@@ -9,12 +9,12 @@ import javax.swing.JPanel;
 import net.net16.jeremiahlowe.caffeineengine.Input;
 import net.net16.jeremiahlowe.caffeineengine.gameui.UIElement;
 
-public class CameraRendererJPanel extends JPanel{
+public class CameraRendererPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	public Camera camera;
 	private BufferedImage buffer;
 	private Input input;
-	public CameraRendererJPanel(Camera camera){
+	public CameraRendererPanel(Camera camera){
 		this.camera = camera;
 		input = new Input();
 		addKeyListener(input);
@@ -34,9 +34,9 @@ public class CameraRendererJPanel extends JPanel{
 		return input;
 	}
 	public void addUIElement(UIElement elem){
-		camera.addRenderListener(elem);
+		camera.addRenderListener(elem, true);
 	}
 	public void removeUIElement(UIElement elem){
-		camera.removeRenderListener(elem);
+		camera.removeRenderListener(elem, true);
 	}
 }
