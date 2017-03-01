@@ -46,9 +46,6 @@ public class Game{
 	public synchronized boolean isPaused(){
 		return paused;
 	}
-	public Input getInput(){
-		return cameraRendererPanel.getInput();
-	}
 	public void addUIElement(UIElement elem){
 		cameraRendererPanel.addUIElement(elem);
 	}

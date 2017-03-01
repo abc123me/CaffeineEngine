@@ -1,80 +1,154 @@
 package net.net16.jeremiahlowe.caffeineengine;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.mouse.NativeMouseEvent;
+import org.jnativehook.mouse.NativeMouseListener;
+import org.jnativehook.mouse.NativeMouseMotionListener;
+import org.jnativehook.mouse.NativeMouseWheelEvent;
+import org.jnativehook.mouse.NativeMouseWheelListener;
 
 import net.net16.jeremiahlowe.bettercollections.vector.Vector2;
 
-public class Input implements MouseListener, KeyListener, MouseMotionListener{
-	private List<Integer> keysPressed = new ArrayList<Integer>();
-	private List<Integer> mouseButtonsPressed = new ArrayList<Integer>();
-	public List<Runnable> onMousePressedCallbacks = new ArrayList<Runnable>();
-	public List<Runnable> onMouseReleaseCallbacks = new ArrayList<Runnable>();
-	public List<Runnable> onMouseMoveCallbacks = new ArrayList<Runnable>();
-	public List<Runnable> onKeyPressCallbacks = new ArrayList<Runnable>();
-	public List<Runnable> onKeyReleaseCallbacks = new ArrayList<Runnable>();
-	private Vector2 mousePosition = new Vector2();
-	private boolean mouseEntered;
-	
-	public boolean isKeyPressed(int keycode){
-		return keysPressed.contains(new Integer(keycode));
+public class Input implements NativeMouseListener, NativeMouseMotionListener, NativeMouseWheelListener, NativeKeyListener{
+	private static List<NativeKeyEvent> keysPressed = new ArrayList<NativeKeyEvent>();
+	private static boolean[] mouseButtons = new boolean[10];
+	private static Vector2 mousePosition = new Vector2();
+	private static List<Runnable> mouseCallbacks = new ArrayList<Runnable>();
+	private static List<Runnable> mouseMoveCallbacks = new ArrayList<Runnable>();
+	private static List<Runnable> mouseWheelCallbacks = new ArrayList<Runnable>();
+	private static List<Runnable> keyCallbacks = new ArrayList<Runnable>();
+	private static int wheelPos = 0;
+	static{
+		Input i = new Input();
+		Logger.getLogger(GlobalScreen.class.getName()).setLevel(Level.OFF);
+		try {
+			GlobalScreen.registerNativeHook();
+			GlobalScreen.getInstance().addNativeKeyListener(i);
+			GlobalScreen.getInstance().addNativeMouseListener(i);
+			GlobalScreen.getInstance().addNativeMouseMotionListener(i);
+			GlobalScreen.getInstance().addNativeMouseWheelListener(i);
+		}catch(Exception e){
+			Utility.onLibraryError(e, "jnativehook", "www.github.com/kwhat/jnativehook", "1.1.5");
+			System.exit(-1);
+		}
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
+			@Override
+			public void run(){
+				if(GlobalScreen.isNativeHookRegistered()) 
+					GlobalScreen.unregisterNativeHook();
+			}
+		}));
+	} 
+	public static boolean isMouseButtonPressed(int btn){
+		return mouseButtons[btn];
 	}
-	public Vector2 getMousePosition(){
+	public static boolean isKeyPressed(int keyCode){
+		for(NativeKeyEvent k : keysPressed) if(k.getKeyCode() == keyCode) return true;
+		return false;
+	}
+	public static int getMouseWheelPos(){
+		return wheelPos;
+	}
+	public static Vector2 getMousePosition(){
 		return mousePosition.clone();
 	}
-	public boolean isMousePressed(int button){
-		return mouseButtonsPressed.contains(new Integer(button));
+	public static void addKeyCallback(Runnable r){
+		keyCallbacks.add(r);
 	}
-	public boolean isMouseEntered(){
-		return mouseEntered;
+	public static void addMouseCallback(Runnable r){
+		mouseCallbacks.add(r);
 	}
-	
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		keysPressed.add(new Integer(arg0.getKeyCode()));
-		for(Runnable r : onKeyPressCallbacks) r.run();
+	public static void addMouseMoveCallback(Runnable r){
+		mouseMoveCallbacks.add(r);
 	}
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		keysPressed.remove(new Integer(arg0.getKeyCode()));
-		for(Runnable r : onKeyReleaseCallbacks) r.run();
+	public static void addMouseWheelCallback(Runnable r){
+		mouseWheelCallbacks.add(r);
 	}
-	@Override
-	public void keyTyped(KeyEvent arg0) {}
-	@Override
-	public void mouseClicked(MouseEvent arg0) {}
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		mouseEntered = true;
+	public static void removeKeyCallback(Runnable r){
+		keyCallbacks.remove(r);
 	}
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		mouseEntered = false;
+	public static void removeMouseCallback(Runnable r){
+		mouseCallbacks.remove(r);
 	}
+	public static void removeMouseMoveCallback(Runnable r){
+		mouseMoveCallbacks.remove(r);
+	}
+	public static void removeMouseWheelCallback(Runnable r){
+		mouseWheelCallbacks.remove(r);
+	}
+	private Input(){}
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-		mouseButtonsPressed.add(new Integer(arg0.getButton()));
-		for(Runnable r : onMousePressedCallbacks) r.run();
+	public void nativeMouseWheelMoved(NativeMouseWheelEvent arg0) {
+		wheelPos = arg0.getWheelRotation();
+		for(Runnable r : mouseWheelCallbacks) r.run();
 	}
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		mouseButtonsPressed.remove(new Integer(arg0.getButton()));
-		for(Runnable r : onMouseReleaseCallbacks) r.run();
-	}
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
+	public void nativeMouseDragged(NativeMouseEvent arg0) {
 		mousePosition.x = arg0.getX();
 		mousePosition.y = arg0.getY();
+		for(Runnable r : mouseMoveCallbacks) r.run();
 	}
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
+	public void nativeMouseMoved(NativeMouseEvent arg0) {
 		mousePosition.x = arg0.getX();
 		mousePosition.y = arg0.getY();
-		for(Runnable r : onMouseMoveCallbacks) r.run();
+		for(Runnable r : mouseMoveCallbacks) r.run();
+	}
+	@Override
+	public void nativeMouseClicked(NativeMouseEvent arg0) {
+		mousePosition.x = arg0.getX();
+		mousePosition.y = arg0.getY();
+		for(Runnable r : mouseCallbacks) r.run();
+	}
+	@Override
+	public void nativeMousePressed(NativeMouseEvent arg0) {
+		mousePosition.x = arg0.getX();
+		mousePosition.y = arg0.getY();
+		if(arg0.getButton() > mouseButtons.length){
+			boolean[] n = new boolean[arg0.getButton()];
+			for(int i = 0; i < arg0.getButton(); i++){
+				if(i < mouseButtons.length) n[i] = mouseButtons[i];
+				else n[i] = false;
+			}
+			mouseButtons = n;
+		}
+		mouseButtons[arg0.getButton()] = true;
+		for(Runnable r : mouseCallbacks) r.run();
+	}
+	@Override
+	public void nativeMouseReleased(NativeMouseEvent arg0) {
+		mousePosition.x = arg0.getX();
+		mousePosition.y = arg0.getY();
+		if(arg0.getButton() > mouseButtons.length){
+			boolean[] n = new boolean[arg0.getButton()];
+			for(int i = 0; i < arg0.getButton(); i++){
+				if(i < mouseButtons.length) n[i] = mouseButtons[i];
+				else n[i] = false;
+			}
+			mouseButtons = n;
+		}
+		mouseButtons[arg0.getButton()] = false;
+		for(Runnable r : mouseCallbacks) r.run();
+	}
+	@Override
+	public void nativeKeyPressed(NativeKeyEvent arg0) {
+		keysPressed.add(arg0);
+		for(Runnable r : keyCallbacks) r.run();
+	}
+	@Override
+	public void nativeKeyReleased(NativeKeyEvent arg0) {
+		keysPressed.remove(arg0);
+		for(Runnable r : keyCallbacks) r.run();
+	}
+	@Override
+	public void nativeKeyTyped(NativeKeyEvent arg0) {
+		for(Runnable r : keyCallbacks) r.run();
 	}
 }

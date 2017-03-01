@@ -16,10 +16,6 @@ public class CameraRendererPanel extends JPanel{
 	private Input input;
 	public CameraRendererPanel(Camera camera){
 		this.camera = camera;
-		input = new Input();
-		addKeyListener(input);
-		addMouseListener(input);
-		addMouseMotionListener(input);
 	}
 	@Override
 	public void paintComponent(Graphics g){

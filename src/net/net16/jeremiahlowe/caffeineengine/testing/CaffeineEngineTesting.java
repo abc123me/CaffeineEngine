@@ -7,7 +7,7 @@ import net.net16.jeremiahlowe.caffeineengine.gameui.Button;
 public class CaffeineEngineTesting {
 	public static void main(String[] args) {
 		Game game = new Game();
-		Button btn = new Button(game.getInput(), new Runnable(){
+		Button btn = new Button(new Runnable(){
 			@Override
 			public void run(){
 				System.out.println("Hello world!");

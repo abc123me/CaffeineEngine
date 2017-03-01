@@ -7,7 +7,7 @@ import net.net16.jeremiahlowe.bettercollections.vector.Vector2;
 import net.net16.jeremiahlowe.caffeineengine.Input;
 import net.net16.jeremiahlowe.caffeineengine.geometry.Bounds;
 
-public class Button extends UIElement implements Runnable{
+public class Button extends UIElement{
 	public Runnable onClick;
 	public String text = "New Button";
 	public Vector2 borderSize = new Vector2(5, 15);
@@ -15,11 +15,11 @@ public class Button extends UIElement implements Runnable{
 	public int buttonBorderRoundness = 5;
 	private Bounds bounds = new Bounds();
 	
-	public Button(Input input, Runnable onClick, String text){
-		super(input);
+	public Button(Runnable onClick, String text){
+		super();
 		if(onClick == null) throw new NullPointerException("onClick action is null for button (" + text + ")");
 		this.onClick = onClick; this.text = text;
-		input.onMousePressedCallbacks.add(this);
+		this.addMouseCallback();
 	}
 
 	@Override
@@ -43,14 +43,10 @@ public class Button extends UIElement implements Runnable{
 		
 	}
 	@Override
-	public void remove(){
-		input.onMousePressedCallbacks.remove(this);
-	}
-	@Override
-	public void run() {
-		Vector2 mousePos = input.getMousePosition();
-		if(input != null && bounds.inBounds(mousePos))
-			if(input.isMousePressed(buttonToTriggerUpon)) 
+	public void onMouse() {
+		Vector2 mousePos = Input.getMousePosition();
+		if(bounds.inBounds(mousePos))
+			if(Input.isMouseButtonPressed(buttonToTriggerUpon)) 
 				onClick.run();
 	}
 }
