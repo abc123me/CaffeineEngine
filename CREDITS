@@ -1,9 +1,5 @@
 Lead developers:
 -Jeremiah Lowe (abc123me)
 
-This project would not be possible without jnativehook
-Please check it out at www.github.com/kwhat/jnativehook
-
 Libraries:
--jnativehook 1.1.5 (www.github.com/kwhat/jnativehook)
 -BetterCollections (www.github.com/abc123me/Better-Collections)
