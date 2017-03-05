@@ -1,7 +1,6 @@
 package net.net16.jeremiahlowe.caffeineengine;
 
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
@@ -9,11 +8,14 @@ import javax.swing.JFrame;
 import net.net16.jeremiahlowe.TickedOff.TickManager;
 import net.net16.jeremiahlowe.caffeineengine.camera.Camera;
 import net.net16.jeremiahlowe.caffeineengine.camera.CameraRendererPanel;
+import net.net16.jeremiahlowe.caffeineengine.game.GameObject;
+import net.net16.jeremiahlowe.caffeineengine.game.World;
 import net.net16.jeremiahlowe.caffeineengine.gameui.UIElement;
 import net.net16.jeremiahlowe.caffeineengine.geometry.Bounds;
 
 public class Game{
 	public Camera mainCamera;
+	public World world;
 	private boolean paused = false;
 	public TickManager gameTick;
 	private Thread gameTickThread;
@@ -48,6 +50,9 @@ public class Game{
 	}
 	public void addUIElement(UIElement elem){
 		cameraRendererPanel.addUIElement(elem);
+	}
+	public void addGameObject(GameObject g){
+		world.addGameObject(g);
 	}
 }
 class GameTicker implements Runnable{

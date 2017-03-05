@@ -25,4 +25,8 @@ public class Bounds {
 		r.width = (int) w; r.height = (int) h;
 		return r;
 	}
+	@Override
+	public String toString(){
+		return "Bounds (" + x + ", " + y + ") " + w + "x" + h;
+	}
 }
