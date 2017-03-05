@@ -13,9 +13,12 @@ public class CameraRendererPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	public Camera camera;
 	private BufferedImage buffer;
-	private Input input;
 	public CameraRendererPanel(Camera camera){
 		this.camera = camera;
+		addMouseListener(Input.instance);
+		addKeyListener(Input.instance);
+		addMouseMotionListener(Input.instance);
+		addMouseWheelListener(Input.instance);
 	}
 	@Override
 	public void paintComponent(Graphics g){
@@ -25,9 +28,6 @@ public class CameraRendererPanel extends JPanel{
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.drawImage(buffer, 0, 0, getWidth(), getHeight(), null);
-	}
-	public Input getInput(){
-		return input;
 	}
 	public void addUIElement(UIElement elem){
 		camera.addRenderListener(elem, true);
