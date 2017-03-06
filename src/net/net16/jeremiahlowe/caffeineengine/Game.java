@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
+import net.net16.jeremiahlowe.TickedOff.OnTick;
 import net.net16.jeremiahlowe.TickedOff.TickManager;
 import net.net16.jeremiahlowe.caffeineengine.camera.Camera;
 import net.net16.jeremiahlowe.caffeineengine.camera.CameraRendererPanel;
@@ -13,7 +14,7 @@ import net.net16.jeremiahlowe.caffeineengine.game.World;
 import net.net16.jeremiahlowe.caffeineengine.gameui.UIElement;
 import net.net16.jeremiahlowe.caffeineengine.geometry.Bounds;
 
-public class Game{
+public class Game implements OnTick{
 	public Camera mainCamera;
 	public World world;
 	private boolean paused = false;
@@ -23,8 +24,9 @@ public class Game{
 	public JFrame frame;
 	
 	public Game(){
-		gameTick = new TickManager(); 
-		mainCamera = new Camera();
+		gameTick = new TickManager();
+		world = new World();
+		mainCamera = new Camera(world);
 		frame = new JFrame(); 
 		cameraRendererPanel = new CameraRendererPanel(mainCamera);
 		cameraRendererPanel.setVisible(true); 
@@ -37,6 +39,12 @@ public class Game{
 		frame.add(cameraRendererPanel); 
 		frame.setBounds(bds.toRectangle());
 		gameTickThread = new Thread(new GameTicker(this));
+	}
+	
+	@Override
+	public void onTick(){
+		cameraRendererPanel.repaint();
+		world.onTick();
 	}
 	
 	public void start(){

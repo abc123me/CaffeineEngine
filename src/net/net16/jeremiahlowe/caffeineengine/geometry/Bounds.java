@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 
 import net.net16.jeremiahlowe.bettercollections.vector.Vector2;
 
-public class Bounds {
+public class Bounds implements Cloneable{
 	public float x, y, w, h;
 	public Bounds(){this(0, 0, 0, 0);}
 	public Bounds(Vector2 pos, Vector2 size){this(pos.x, pos.y, size.x, size.y);}
@@ -28,5 +28,9 @@ public class Bounds {
 	@Override
 	public String toString(){
 		return "Bounds (" + x + ", " + y + ") " + w + "x" + h;
+	}
+	@Override
+	public Bounds clone(){
+		return new Bounds(x, y, w, h);
 	}
 }

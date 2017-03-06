@@ -5,6 +5,7 @@ import net.net16.jeremiahlowe.bettercollections.vector.Vector2;
 
 public class Transform implements Cloneable{
 	public Vector2 position;
+	public Vector2 size;
 	public Rotation rotation;
 	public Transform(){this(Vector2.ZERO, Rotation.NORTH);}
 	public Transform(Vector2 position){this(position, Rotation.NORTH);}

@@ -30,9 +30,9 @@ public class CameraRendererPanel extends JPanel{
 		g.drawImage(buffer, 0, 0, getWidth(), getHeight(), null);
 	}
 	public void addUIElement(UIElement elem){
-		camera.addRenderListener(elem, true);
+		camera.addUIRenderListener(elem);
 	}
 	public void removeUIElement(UIElement elem){
-		camera.removeRenderListener(elem, true);
+		camera.removeUIRenderListener(elem);
 	}
 }
